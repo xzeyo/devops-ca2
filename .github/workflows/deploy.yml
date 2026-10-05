@@ -80,12 +80,12 @@ jobs:
     name: Deploy to k3s (rolling update)
     needs: build
     runs-on: ubuntu-latest
-    env:
-      VM_PASS: ${{ secrets.VM_PASS }}
-      IMAGE_REF: ${{ env.IMAGE }}:latest
     steps:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1
+        env:
+          VM_PASS: ${{ secrets.VM_PASS }}
+          IMAGE_REF: ${{ env.IMAGE }}:latest
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
