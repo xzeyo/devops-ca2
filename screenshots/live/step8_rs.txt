@@ -1,0 +1,7 @@
+===RS===
+NAME                       DESIRED   CURRENT   READY   AGE
+hello-service-54cbfc96f7   0         0         0       72s
+hello-service-56dc654bcd   3         3         3       101s
+===FINAL-CURL===
+{"service":"hello-service","version":"1.0.0","hostname":"hello-service-56dc654bcd-4kwp6","time":"2026-10-01T16:49:37.546751854Z"}
+{"service":"hello-service","version":"1.0.0","hostname":"hello-service-56dc654bcd-4kwp6","time":"2026-10-01T16:49:37.559151293Z"}

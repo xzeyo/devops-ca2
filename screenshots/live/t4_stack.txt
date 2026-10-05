@@ -1,0 +1,18 @@
+===PODS===
+NAME                                                 READY   STATUS    RESTARTS   AGE
+kps-grafana-65f7c5f8f-s6zzv                          3/3     Running   0          6m32s
+kps-kube-prometheus-stack-operator-747b5dfd8-6g4xt   1/1     Running   0          6m32s
+kps-kube-state-metrics-67c8fc75bb-wxt74              1/1     Running   0          6m32s
+prometheus-kps-kube-prometheus-stack-prometheus-0    2/2     Running   0          6m20s
+===TARGETS===
+     10 "health":"up"
+      1 "job":"apiserver"
+      1 "job":"coredns"
+      3 "job":"hello-service"
+      1 "job":"kps-grafana"
+      1 "job":"kps-kube-prometheus-stack-operator"
+      2 "job":"kps-kube-prometheus-stack-prometheus"
+      1 "job":"kube-state-metrics"
+      1 "job":"serviceMonitor/monitoring/hello-service/0"
+===UP-QUERY===
+{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"up","container":"hello-service","endpoint":"http","instance":"10.42.0.16:8080","job":"hello-service","namespace":"default","pod":"hello-service-65478774fb-gcqww","service":"hello-service"},"value":[1790877729.534,"1"]},{...10.42.0.15:8080... "value":[...,"1"]},{... "value":[...,"1"]}]}}

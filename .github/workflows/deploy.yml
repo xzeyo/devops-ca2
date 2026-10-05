@@ -1,0 +1,107 @@
+name: build-and-deploy
+
+# CA-II Task 1 - Deployment Strategy (GitHub Actions)
+# Builds the Java service, smoke-tests the container, pushes to GHCR,
+# then deploys to the k3s cluster over SSH with a verified rolling update.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  IMAGE: ghcr.io/xzeyo/hello-service
+
+jobs:
+  build:
+    name: Build, test & push image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Compile (smoke build)
+        run: javac -d build app/src/Main.java
+
+      - name: Compute version tag
+        run: echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: |
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+            ${{ env.IMAGE }}:latest
+          build-args: |
+            APP_VERSION=${{ env.VERSION }}
+
+      - name: Smoke test the container
+        run: |
+          docker run -d --name smoke -p 8080:8080 ${{ env.IMAGE }}:${{ env.VERSION }}
+          sleep 4
+          curl -fsS http://localhost:8080/health | grep -q OK
+          curl -fsS http://localhost:8080/ | grep -q hello-service
+          docker rm -f smoke
+
+      - name: Push image to GHCR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+            ${{ env.IMAGE }}:latest
+          build-args: |
+            APP_VERSION=${{ env.VERSION }}
+
+  deploy:
+    name: Deploy to k3s (rolling update)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VM_PASS: ${{ secrets.VM_PASS }}
+      IMAGE_REF: ${{ env.IMAGE }}:latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          envs: VM_PASS,IMAGE_REF
+          script: |
+            set -e
+            echo "=== pull image into cluster containerd ==="
+            echo "$VM_PASS" | sudo -S -p '' k3s ctr -n k8s.io images pull "$IMAGE_REF"
+            echo "=== rolling update ==="
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+            kubectl set image deployment/hello-service \
+              hello-service="$IMAGE_REF"
+            kubectl rollout status deployment/hello-service --timeout=180s
+            echo "=== post-deploy health check ==="
+            curl -fsS http://localhost:30080/health
+            echo
+            curl -fsS http://localhost:30080/ | grep -q hello-service
+            echo "DEPLOY OK"

@@ -1,0 +1,24 @@
+
+PLAY [Configure the runtime environment] ***************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [192.168.1.109]
+
+TASK [Install required packages] ***********************************************
+changed: [192.168.1.109]
+
+TASK [Create managed service account] ******************************************
+changed: [192.168.1.109]
+
+TASK [Deploy MOTD banner (managed file)] ***************************************
+changed: [192.168.1.109]
+
+TASK [Deploy README into managed user's home] **********************************
+changed: [192.168.1.109]
+
+TASK [Verify managed state] ****************************************************
+ok: [192.168.1.109]
+
+PLAY RECAP *********************************************************************
+192.168.1.109              : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

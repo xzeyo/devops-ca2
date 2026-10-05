@@ -1,0 +1,73 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ca2-hello-service",
+    "title": "hello-service — CA-II Task 4 (uptime, latency, errors)",
+    "tags": ["ca2", "hello-service"],
+    "timezone": "browser",
+    "refresh": "5s",
+    "schemaVersion": 39,
+    "version": 1,
+    "time": {"from": "now-30m", "to": "now"},
+    "panels": [
+      {
+        "id": 1, "type": "stat", "title": "Service uptime (targets up)",
+        "gridPos": {"h": 5, "w": 6, "x": 0, "y": 0},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "up{job=~\".*hello-service.*\"}"}],
+        "fieldConfig": {"defaults": {
+          "mappings": [{"type": "value", "options": {
+            "1": {"text": "UP", "color": "green"},
+            "0": {"text": "DOWN", "color": "red"}}}],
+          "min": 0, "max": 1},
+          "overrides": []}
+      },
+      {
+        "id": 2, "type": "stat", "title": "Requests total (all pods)",
+        "gridPos": {"h": 5, "w": 6, "x": 6, "y": 0},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "sum(http_requests_total)"}],
+        "fieldConfig": {"defaults": {}, "overrides": []}
+      },
+      {
+        "id": 3, "type": "stat", "title": "Error rate % (non-2xx)",
+        "gridPos": {"h": 5, "w": 6, "x": 12, "y": 0},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "100 * sum(rate(http_requests_total{code!~\"2..\"}[5m])) / sum(rate(http_requests_total[5m]))"}],
+        "fieldConfig": {"defaults": {"unit": "percent", "decimals": 2}, "overrides": []}
+      },
+      {
+        "id": 4, "type": "stat", "title": "Latency p95 (s)",
+        "gridPos": {"h": 5, "w": 6, "x": 18, "y": 0},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))"}],
+        "fieldConfig": {"defaults": {"unit": "s", "decimals": 4}, "overrides": []}
+      },
+      {
+        "id": 5, "type": "timeseries", "title": "Request rate (req/s)",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 5},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "sum(rate(http_requests_total[1m]))", "legendFormat": "all pods"}],
+        "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+      },
+      {
+        "id": 6, "type": "timeseries", "title": "Requests by status code",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 5},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [{"refId": "A", "expr": "sum(rate(http_requests_total[1m])) by (code)", "legendFormat": "{{code}}"}],
+        "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+      },
+      {
+        "id": 7, "type": "timeseries", "title": "Latency p50 / p95 (s)",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 13},
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "targets": [
+          {"refId": "A", "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p50"},
+          {"refId": "B", "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95"}
+        ],
+        "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+      }
+    ]
+  },
+  "overwrite": true
+}

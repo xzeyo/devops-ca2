@@ -1,0 +1,56 @@
+---
+# CA-II Task 2 - Configuration Management & IaC
+# Configures the runtime environment: installs packages, creates a managed
+# user, and manages configuration files. Idempotent - safe to re-run.
+- name: Configure the runtime environment
+  hosts: ca2_vm
+  become: true
+  tasks:
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - htop
+          - tree
+          - jq
+        state: present
+        update_cache: true
+
+    - name: Create managed service account
+      ansible.builtin.user:
+        name: devops-lab
+        comment: "Managed by Ansible - DevOps CA-II Task 2"
+        shell: /bin/bash
+        create_home: true
+        state: present
+
+    - name: Deploy MOTD banner (managed file)
+      ansible.builtin.copy:
+        content: |
+          ################################################
+          #   Managed by Ansible - DevOps CA-II Task 2   #
+          #   Host: {{ inventory_hostname }}             #
+          ################################################
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Deploy README into managed user's home
+      ansible.builtin.copy:
+        content: |
+          This account is provisioned and managed by Ansible
+          (DevOps CA-II Task 2 - Configuration Management & IaC).
+        dest: /home/devops-lab/README.txt
+        owner: devops-lab
+        group: devops-lab
+        mode: "0644"
+
+    - name: Verify managed state
+      ansible.builtin.command: /bin/true
+      changed_when: false
+      register: verify
+      notify: nothing needed
+  handlers:
+    - name: nothing needed
+      ansible.builtin.debug:
+        msg: "Configuration converged - no handlers required"

@@ -1,0 +1,7 @@
+app/build/
+*.class
+linux-amd64/
+*.tgz
+*.zip
+__pycache__/
+.DS_Store

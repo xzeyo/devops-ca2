@@ -1,0 +1,12 @@
+# Runtime-only image used for the live run on the disk-constrained VM:
+# Main.java is compiled on the host (apt openjdk) because pulling the JDK
+# base image would not fit in /var. The submission Dockerfile (multi-stage
+# JDK -> JRE) is the canonical version for a normal machine.
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+ARG APP_VERSION=1.0.0
+ENV APP_VERSION=${APP_VERSION}
+COPY app/build/Main.class .
+EXPOSE 8080
+USER 1000
+ENTRYPOINT ["java", "Main"]

@@ -1,0 +1,11 @@
+===PODS-AFTER===
+NAME                             READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES
+hello-service-54cbfc96f7-2sdcp   1/1     Running   0          22s   10.42.0.9    server   <none>           <none>
+hello-service-54cbfc96f7-p92zs   1/1     Running   0          34s   10.42.0.8    server   <none>           <none>
+hello-service-54cbfc96f7-rz7bl   1/1     Running   0          11s   10.42.0.10   server   <none>           <none>
+hello-service-56dc654bcd-gtn74   0/1     Error     0          63s   10.42.0.7    server   <none>           <none>
+===CURL-x4-V2===
+{"service":"hello-service","version":"2.0.0","hostname":"hello-service-54cbfc96f7-rz7bl","time":"2026-10-01T16:48:59.516772884Z"}
+{"service":"hello-service","version":"2.0.0","hostname":"hello-service-54cbfc96f7-2sdcp","time":"2026-10-01T16:49:00.534706969Z"}
+{"service":"hello-service","version":"2.0.0","hostname":"hello-service-54cbfc96f7-p92zs","time":"2026-10-01T16:49:01.551054953Z"}
+{"service":"hello-service","version":"2.0.0","hostname":"hello-service-54cbfc96f7-p92zs","time":"2026-10-01T16:49:02.563702423Z"}

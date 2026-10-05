@@ -1,0 +1,13 @@
+===GET-SVC===
+NAME            TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+hello-service   NodePort   10.43.1.184   <none>        8080:30080/TCP   12s
+===CURL-x3===
+{"service":"hello-service","version":"1.0.0","hostname":"hello-service-56dc654bcd-gtn74","time":"2026-10-01T16:48:08.687547375Z"}
+{"service":"hello-service","version":"1.0.0","hostname":"hello-service-56dc654bcd-cw5n5","time":"2026-10-01T16:48:08.704150861Z"}
+{"service":"hello-service","version":"1.0.0","hostname":"hello-service-56dc654bcd-cw5n5","time":"2026-10-01T16:48:08.716730594Z"}
+===HEALTH===
+OK
+===METRICS===
+# HELP http_requests_total Total number of HTTP requests handled.
+# TYPE http_requests_total counter
+http_requests_total 2

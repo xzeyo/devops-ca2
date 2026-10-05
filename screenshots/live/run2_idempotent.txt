@@ -1,0 +1,35 @@
+cat: /home/devops-lab/README.txt: Permission denied
+
+PLAY [Configure the runtime environment] ***************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [192.168.1.109]
+
+TASK [Install required packages] ***********************************************
+ok: [192.168.1.109]
+
+TASK [Create managed service account] ******************************************
+ok: [192.168.1.109]
+
+TASK [Deploy MOTD banner (managed file)] ***************************************
+ok: [192.168.1.109]
+
+TASK [Deploy README into managed user's home] **********************************
+ok: [192.168.1.109]
+
+TASK [Verify managed state] ****************************************************
+ok: [192.168.1.109]
+
+PLAY RECAP *********************************************************************
+192.168.1.109              : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+===VERIFY===
+devops-lab:x:1002:1002:Managed by Ansible - DevOps CA-II Task 2:/home/devops-lab:/bin/bash
+---
+################################################
+#   Managed by Ansible - DevOps CA-II Task 2   #
+#   Host: 192.168.1.109             #
+################################################
+---
+---
+3

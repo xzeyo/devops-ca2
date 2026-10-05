@@ -1,0 +1,17 @@
+===APPLY===
+deployment.apps/hello-service created
+service/hello-service created
+===ROLLOUT-STATUS===
+Waiting for deployment "hello-service" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "hello-service" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "hello-service" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "hello-service" rollout to finish: 0 of 3 updated replicas are available...
+deployment "hello-service" successfully rolled out
+===GET-DEPLOY===
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+hello-service   3/3     3            3           12s
+===GET-PODS===
+NAME                             READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+hello-service-56dc654bcd-cw5n5   1/1     Running   0          12s   10.42.0.5   server   <none>           <none>
+hello-service-56dc654bcd-gtn74   1/1     Running   0          12s   10.42.0.7   server   <none>           <none>
+hello-service-56dc654bcd-wt5rx   1/1     Running   0          12s   10.42.0.6   server   <none>           <none>

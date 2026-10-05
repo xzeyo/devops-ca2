@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hello-service
+  namespace: monitoring          # same namespace as the Prometheus CR
+  labels:
+    release: kps                 # matches kube-prometheus-stack release
+spec:
+  namespaceSelector:
+    matchNames: [default]        # where the hello-service Service lives
+  selector:
+    matchLabels:
+      app: hello-service
+  endpoints:
+    - port: http                 # Service port name
+      interval: 5s
