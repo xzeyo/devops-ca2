@@ -79,29 +79,22 @@ jobs:
   deploy:
     name: Deploy to k3s (rolling update)
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted        # runner on the VM itself (private LAN - hosted runners can't reach it)
     steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1
+      - name: Deploy (rolling update + health check)
         env:
           VM_PASS: ${{ secrets.VM_PASS }}
           IMAGE_REF: ${{ env.IMAGE }}:latest
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          envs: VM_PASS,IMAGE_REF
-          script: |
-            set -e
-            echo "=== pull image into cluster containerd ==="
-            echo "$VM_PASS" | sudo -S -p '' k3s ctr -n k8s.io images pull "$IMAGE_REF"
-            echo "=== rolling update ==="
-            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-            kubectl set image deployment/hello-service \
-              hello-service="$IMAGE_REF"
-            kubectl rollout status deployment/hello-service --timeout=180s
-            echo "=== post-deploy health check ==="
-            curl -fsS http://localhost:30080/health
-            echo
-            curl -fsS http://localhost:30080/ | grep -q hello-service
-            echo "DEPLOY OK"
+        run: |
+          set -e
+          echo "=== pull image into cluster containerd ==="
+          echo "$VM_PASS" | sudo -S -p '' k3s ctr -n k8s.io images pull "$IMAGE_REF"
+          echo "=== rolling update ==="
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl set image deployment/hello-service hello-service="$IMAGE_REF"
+          kubectl rollout status deployment/hello-service --timeout=180s
+          echo "=== post-deploy health check ==="
+          curl -fsS http://localhost:30080/health
+          echo
+          curl -fsS http://localhost:30080/ | grep -q hello-service
+          echo "DEPLOY OK"

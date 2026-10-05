@@ -53,5 +53,5 @@ Grafana dashboard: import `k8s/grafana-dashboard.json` (datasource uid `promethe
 
 `.github/workflows/deploy.yml` triggers on every push to `main`/`master`:
 compile (javac 21) → docker build → container smoke test → push to GHCR →
-deploy over SSH (`k3s ctr images pull` → `kubectl set image` → `rollout status`
-→ health check). Required repository secrets: `VM_HOST`, `VM_USER`, `VM_SSH_KEY`.
+deploy from the self-hosted runner on the VM (`k3s ctr images pull` → `kubectl set image` → `rollout status`
+→ health check). Requires the repository secret `VM_PASS`; the deploy job runs on a self-hosted runner installed on the VM.
